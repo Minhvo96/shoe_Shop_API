@@ -1,0 +1,18 @@
+.header {
+    margin-top: 10px;
+    align-items: center;
+}
+
+.fa-cart-shopping {
+    font-size: 30px;
+}
+
+.icon {
+    justify-content: end;
+}
+
+.icon i {
+    margin-left: 20px;
+    font-size: 30px;
+
+}
