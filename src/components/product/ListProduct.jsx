@@ -1,27 +1,36 @@
 import React, { useEffect, useState } from "react";
 import ModalUpdateProduct from "./ModalUpdateProduct";
+import productService from "../../services/productService";
 
 
-const ListProduct = ({ data, setData }) => {
+const ListProduct = ({ data }) => {
     const [showModalUpdate, setShowModalUpdate] = useState(false);
 
-    const [products, setProducts] = useState(data.products);
+    const [products, setProducts] = useState([]);
     const [product, setProduct] = useState({});
 
-    const handleUpdateProducts = (obj) => {
-        const index = products.findIndex(item => item.id === obj.id);
-        const newProducts = [...products];
 
-        newProducts[index] = obj;
-
-        setProducts(newProducts);
-
-        const newData = { ...data, products: newProducts };
-        setData(newData);
+    const getAllProducts = async () => {
+        const data = await productService.getAllProducts();
+        setProducts(data);
     }
 
-    const handleShowModalUpdate = (id) => {
-        const product = findById(id);
+
+    const handleUpdateProducts = async (obj) => {
+
+        const updateProduct = await productService.editProduct(obj.id, obj);
+        console.log(updateProduct);
+        
+        const index = products.findIndex(item => item.id === updateProduct.id);
+        const newProducts = [...products];
+
+        newProducts[index] = updateProduct;
+
+        setProducts(newProducts);
+    }
+
+    const handleShowModalUpdate = async (id) => {
+        const product = await productService.getById(id);
 
         if (Object.keys(product).length) {
             setProduct(product);
@@ -31,10 +40,12 @@ const ListProduct = ({ data, setData }) => {
         }
     }
 
-    const handleDelete = (id) => {
-        const confirmDeleted = window.confirm('Are you sure delete product ' + id);
+    const handleDelete = async (id) => {
+        const confirmDeleted = window.confirm('Are you sure delete product ' + id + ' ?');
 
         if (confirmDeleted) {
+            await productService.deleteProduct(id);
+
             const index = products.findIndex(item => item.id === id);
 
             const newProducts = [...products];
@@ -43,34 +54,34 @@ const ListProduct = ({ data, setData }) => {
 
             setProducts(newProducts);
 
-            const newData = { ...data, products: newProducts };
-            setData(newData);
+            alert('Deleled product successfully!');
+
+            // await productService.deleteProduct(id);
+            // const deleteProduct = products.filter(item => item.id !== id);
+            // setProducts(deleteProduct);
+            // alert('Deleled product successfully!');
         } else {
             alert('Cant find product with that ID');
         }
     }
 
+
+
     const handleCloseModalUpdate = () => {
         setShowModalUpdate(false);
     }
 
-    const findById = (id) => {
-        return products.find(item => item.id === id);
-    }
-
     const sortProducts = array => {
-        array.sort((a, b) => { return b.id - a.id });
+        if (array && array.length) {
+            array.sort((a, b) => { return b.id - a.id });
+        }
         return array;
     }
 
     useEffect(() => {
-        let newProducts = [...products];
-        const reverseProducts = sortProducts(newProducts);
-        setProducts(reverseProducts);
+        getAllProducts();
     }, [])
-
-
-
+    
     return (
         <>
             <div id="product">
@@ -91,7 +102,7 @@ const ListProduct = ({ data, setData }) => {
                     </thead>
                     <tbody>
                         {
-                            products.map(shoe => {
+                            sortProducts(products).map(shoe => {
                                 return (
                                     <tr key={shoe.id}>
                                         <td>

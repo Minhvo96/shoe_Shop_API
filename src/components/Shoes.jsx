@@ -20,8 +20,8 @@ function ShoesRender() {
                         <Route path="/" element={<SideBar data={data} />} />
                         <Route path="/dashboard" element={<DashboardLayout />}>
                             <Route path="" element={<Dashboard />} />
-                            <Route path="products" element={<ListProduct data={data} setData={setData} />} />
-                            <Route path="products/create" element={<CreateProduct data={data} setData={setData}/>} />
+                            <Route path="products" element={<ListProduct data={data} />} />
+                            <Route path="products/create" element={<CreateProduct data={data}/>} />
                         </Route>
                     </Routes>
                 </div>

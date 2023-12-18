@@ -129,7 +129,7 @@ function SideBar({ data }) {
                     {
                         companies.map((item) => {
                             return (
-                                <button type="button" className={filterCompanyStatus && item.title === companyTitle ? "btn btn-primary px-5" : "btn btn-outline-primary px-5"}
+                                <button key={item.id} type="button" className={filterCompanyStatus && item.title === companyTitle ? "btn btn-primary px-5" : "btn btn-outline-primary px-5"}
                                     onClick={() => { handleSetCompanyFilterStatus(true); handleChangeCompany(item.title); }}>{item.title}</button>
                             )
                         })

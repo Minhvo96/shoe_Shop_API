@@ -1,10 +1,14 @@
-import React, { useState } from "react";
+import axios from "axios";
+import React, { useEffect, useState } from "react";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 
+const imageMimeType = /image\/(png|jpg|jpeg)/i;
 
 const ModalUpdateProduct = ({ show, handleCloseModalUpdate, product, handleUpdateProducts, data }) => {
     const [newProduct, setNewProduct] = useState({});
+    const [fileDataURL, setFileDataURL] = useState(null);
+    const defaultImage = 'https://www.lifewire.com/thmb/TRGYpWa4KzxUt1Fkgr3FqjOd6VQ=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/cloud-upload-a30f385a928e44e199a62210d578375a.jpg';
 
     const handleChangeProduct = (e) => {
         if (Object.keys(newProduct).length) {
@@ -18,14 +22,80 @@ const ModalUpdateProduct = ({ show, handleCloseModalUpdate, product, handleUpdat
                 [e.target.name]: e.target.value
             });
         }
-        handleUpdateProducts(newProduct);
     }
 
     const handleUpdateAndAlert = () => {
-        alert('Edit Product successfully');
-        handleUpdateProducts(newProduct);
-        handleCloseModalUpdate();
+        if (!newProduct.img) {
+            alert("Please upload an image");
+            return;
+        } else {
+            alert('Edit Product successfully');
+            handleUpdateProducts(newProduct);
+            handleCloseModalUpdate();
+        }
     }
+
+    const uploadAvatar = async (e) => {
+
+        const file = e.target.files[0];
+
+        if (!file.type.match(imageMimeType)) {
+            alert("Image mime type is not valid");
+            return;
+        }
+
+        let fileReader, isCancel = false;
+
+        if (!file) {
+            return;
+        }
+
+        if (file) {
+            fileReader = new FileReader();
+            fileReader.onload = (e) => {
+                const { result } = e.target;
+                if (result && !isCancel) {
+                    setFileDataURL(result);
+                }
+            };
+            fileReader.readAsDataURL(file);
+        }
+
+        const CLOUD_NAME = "dw3x98oui";
+        const UNSIGNED_UPLOAD_PRESET = "ml_default";
+
+        const POST_URL =
+            "https://api.cloudinary.com/v1_1/" + CLOUD_NAME + "/auto/upload";
+
+        var formData = new FormData();
+        formData.append("file", file);
+        formData.append("cloud_name", CLOUD_NAME);
+        formData.append("upload_preset", UNSIGNED_UPLOAD_PRESET);
+
+        const uploadedImage = await axios({
+            method: 'post',
+            url: POST_URL,
+            data: formData
+        }).then((data) => {
+            return data.data;
+        });
+
+        setNewProduct({
+            ...newProduct,
+            id: product.id,
+            img: uploadedImage.url
+        });
+    };
+
+    console.log(newProduct);
+
+    const handleClickImage = () => {
+        document.getElementById('img').click();
+    }
+
+    useEffect(() => {
+        setFileDataURL(product.img || defaultImage);
+    }, [product.img, show]);
 
     return (
         <Modal show={show} onHide={handleCloseModalUpdate} size="lg" centered>
@@ -97,7 +167,10 @@ const ModalUpdateProduct = ({ show, handleCloseModalUpdate, product, handleUpdat
                     <div className="row">
                         <div className="col-lg-12">
                             <label htmlFor="">Image</label>
-                            <input type="text" name="img" className="form-control" defaultValue={product.img} onChange={handleChangeProduct} />
+                            <div>
+                                <input type="file" id="img" name="img" className="form-control" onChange={uploadAvatar} hidden />
+                                <img src={fileDataURL} alt="" width={"200px"} height={"150px"} onClick={handleClickImage} />
+                            </div>
                         </div>
                     </div>
                 </form>
