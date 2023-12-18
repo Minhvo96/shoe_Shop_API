@@ -1,10 +1,10 @@
 import axios from "axios"
 
-
+const urlAPI = 'https://json-server-five-mu.vercel.app/products';
 const productService = {
     getAllProducts: async () => {
         return axios
-            .get('http://localhost:3030/products')
+            .get(urlAPI)
             .then((response) => {
                 return response.data;
             })
@@ -14,7 +14,7 @@ const productService = {
     },
     createProduct: async (obj) => {
         return axios
-            .post('http://localhost:3030/products', obj)
+            .post(urlAPI, obj)
             .then((response) => {
                 return response.data;
             })
@@ -24,7 +24,7 @@ const productService = {
     },
     editProduct: async (id, obj) => {
         return axios
-            .patch('http://localhost:3030/products/' + id, obj)
+            .patch(urlAPI + '/' + id, obj)
             .then((response) => {
                 return response.data;
             })
@@ -34,7 +34,7 @@ const productService = {
     },
     deleteProduct: async (id) => {
         return axios
-            .delete('http://localhost:3030/products/' + id)
+            .delete(urlAPI + '/' + id)
             .then((response) => {
                 return response.data;
             })
@@ -44,7 +44,7 @@ const productService = {
     },
     getById: async (id) => {
         return axios
-            .get('http://localhost:3030/products/' + id)
+            .get(urlAPI + '/' + id)
             .then((response) => {
                 return response.data;
             })
