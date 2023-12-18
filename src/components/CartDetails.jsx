@@ -12,14 +12,13 @@ const CartDetails = ({ cart, setCart }) => {
         setCart(listCarts);
     }
 
-
-
     const cartLists = async () => {
         const newData = []
         for (let i = 0; i < cart.length; i++) {
             const item = await productService.getById(cart[i].id);
+            const product = { ...item, quantity: cart[i].quantity }
             if (item) {
-                newData.push(item);
+                newData.push(product);
             }
         }
         setCartListDetails(newData)
@@ -27,12 +26,16 @@ const CartDetails = ({ cart, setCart }) => {
 
 
     const loadData = async () => {
-        await getAllCarts();
-        await cartLists();
+        if (cart.length > 0) {
+            await cartLists();
+        } else {
+            await getAllCarts();
+            await cartLists();
+        }
     }
     useEffect(() => {
-        loadData()
-    }, [])
+        loadData();
+    }, [cart])
 
     return (
         <>
@@ -66,11 +69,13 @@ const CartDetails = ({ cart, setCart }) => {
                                         <td>
                                             {item.newPrice}
                                         </td>
-                                        {/* <td>
-                                        {item.quantity}
-                                    </td> */}
                                         <td>
-                                            <i className="fas fa-edit me-2"></i>
+                                            {item.quantity}
+                                        </td>
+                                        <td>
+                                            {parseInt(item.quantity) * parseInt(item.newPrice)}
+                                        </td>
+                                        <td>
                                             <i className="fa-solid fa-trash" ></i>
                                         </td>
                                     </tr>
