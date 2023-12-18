@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import productService from "../services/productService";
 import Header from "./Header";
 import cartService from "../services/cartService";
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function SideBar({ data, product, setProduct, cart, setCart, statusCart, setStatusCart }) {
     const [products, setProducts] = useState([]);
@@ -156,6 +158,10 @@ function Content({ filterProduct, filterCompanyStatus, filterCategoryStatus, fil
         for (let i = 0; i < response.length; i++) {
             if (response[i].id == id) {
                 response[i].quantity = response[i].quantity + 1;
+
+                toast.success(`Quantity updated for product ${id}`, {
+                    position: toast.POSITION.TOP_RIGHT
+                });
                 
                 cartService.editCart(id, response[i]); 
                 setStatusCart(true);
@@ -167,6 +173,11 @@ function Content({ filterProduct, filterCompanyStatus, filterCategoryStatus, fil
             quantity: 1
         }
         await cartService.createCart(newProduct);
+
+        toast.info(`Added product with ID: ${id} to cart`, {
+            position: toast.POSITION.TOP_RIGHT
+        });
+
         setStatusCart(true);
     }
 
