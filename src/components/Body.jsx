@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-function SideBar({ data }) {
+function SideBar({ data, product, setProduct, cart, setCart }) {
     const [products, setProducts] = useState(data.products);
     const [filterProduct, setFilterProduct] = useState([]);
 
@@ -30,14 +30,12 @@ function SideBar({ data }) {
     const handleSetCategoryFilterStatus = (tf) => {
         setFilterCategoryStatus(tf);
     }
-
     const handleChangePrice = (priceMin, priceMax) => {
         setPricesTitle([priceMin, priceMax]);
     }
     const handleSetPriceFilterStatus = (tf) => {
         setFilterPriceStatus(tf);
     }
-
     const handleChangeColor = (colorTitle) => {
         setColorsTitle(colorTitle);
     }
@@ -136,14 +134,50 @@ function SideBar({ data }) {
                     }
                 </div>
                 <div className="d-flex flex-wrap gap-5">
-                    <Content filterProduct={filterProduct} filterCompanyStatus={filterCompanyStatus} filterCategoryStatus={filterCategoryStatus} filterColorStatus={filterColorStatus} filterPriceStatus={filterPriceStatus} data={data} />
+                    <Content filterProduct={filterProduct} filterCompanyStatus={filterCompanyStatus} filterCategoryStatus={filterCategoryStatus} filterColorStatus={filterColorStatus} filterPriceStatus={filterPriceStatus} data={data} product={product} setProduct={setProduct} cart={cart} setCart={setCart} />
                 </div>
             </div>
         </div>
     )
 }
 
-function Content({ filterProduct, filterCompanyStatus, filterCategoryStatus, filterColorStatus, filterPriceStatus, data }) {
+function Content({ filterProduct, filterCompanyStatus, filterCategoryStatus, filterColorStatus, filterPriceStatus, data, product, setProduct, cart, setCart }) {
+
+    const handleAddProductToCart = (id) => {
+        checkProductInCart(id);
+        console.log(cart);
+    }
+
+    const checkProductInCart = (id) => {
+    const index = cart.findIndex(item => item.id === id); // Use strict equality (===) instead of loose equality (==)
+    console.log(index);
+
+    if (index > -1) {
+        // If the product is already in the cart, update its quantity
+        const updatedCart = cart.map(item => {
+            if (item.id === id) {
+                return { ...item, quantity: item.quantity + 1 };
+            }
+            return item;
+        });
+
+        setCart(updatedCart);
+    } else {
+        // If the product is not in the cart, add it with quantity 1
+        const newProduct = {
+            id: `${id}`,
+            quantity: 1
+        };
+        setCart([...cart, newProduct]); // Create a new array to avoid mutating the state directly
+    }
+}
+
+
+    useEffect(() => {
+
+    }, [cart])
+
+
     return (
         <>
             {
@@ -183,7 +217,7 @@ function Content({ filterProduct, filterCompanyStatus, filterCategoryStatus, fil
                                     <p style={{ textDecoration: 'line-through' }}>${shoe.prevPrice}</p>
                                     <p>${shoe.newPrice}</p>
                                 </div>
-                                <a href="#" className="btn btn-primary">Add to Cart</a>
+                                <a href="#" className="btn btn-primary" onClick={() => handleAddProductToCart(shoe.id)}>Add to Cart</a>
                             </div>
                         </div>
                     ))

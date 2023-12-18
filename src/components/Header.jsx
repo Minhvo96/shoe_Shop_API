@@ -3,7 +3,7 @@ import '../components/header.css';
 import data from "../data/products.json";
 import { Link } from 'react-router-dom';
 
-function Header() {
+function Header({ cart }) {
     return (
         <div className="container d-flex header">
             <div className="col-md-3 d-flex">
@@ -29,7 +29,7 @@ function Header() {
                     </ul>
                 </div>
                 <i className="fa-regular fa-heart"></i>
-                <i className="fa-solid fa-cart-arrow-down"></i>
+                <i className="fa-solid fa-cart-arrow-down">{cart.length}</i>
 
             </div>
         </div>

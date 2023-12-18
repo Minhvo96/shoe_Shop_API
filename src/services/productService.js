@@ -4,7 +4,7 @@ import axios from "axios"
 const productService = {
     getAllProducts: async () => {
         return axios
-            .get('https://jsonserver-vercel-api.vercel.app/products')
+            .get('http://localhost:3000/products')
             .then((response) => {
                 return response.data;
             })
@@ -14,7 +14,7 @@ const productService = {
     },
     createProduct: async (obj) => {
         return axios
-            .post('https://jsonserver-vercel-api.vercel.app/products', obj)
+            .post('http://localhost:3000/products', obj)
             .then((response) => {
                 return response.data;
             })
@@ -24,7 +24,7 @@ const productService = {
     },
     editProduct: async (id, obj) => {
         return axios
-            .patch('https://jsonserver-vercel-api.vercel.app/products/' + id, obj)
+            .patch('http://localhost:3000/products/' + id, obj)
             .then((response) => {
                 return response.data;
             })
@@ -34,7 +34,7 @@ const productService = {
     },
     deleteProduct: async (id) => {
         return axios
-            .delete('https://jsonserver-vercel-api.vercel.app/products/' + id)
+            .delete('http://localhost:3000/products/' + id)
             .then((response) => {
                 return response.data;
             })
@@ -44,7 +44,7 @@ const productService = {
     },
     getById: async (id) => {
         return axios
-            .get('https://jsonserver-vercel-api.vercel.app/products/' + id)
+            .get('http://localhost:3000/products/' + id)
             .then((response) => {
                 return response.data;
             })

@@ -87,8 +87,6 @@ const ModalUpdateProduct = ({ show, handleCloseModalUpdate, product, handleUpdat
         });
     };
 
-    console.log(newProduct);
-
     const handleClickImage = () => {
         document.getElementById('img').click();
     }
