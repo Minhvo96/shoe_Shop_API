@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from "react";
+import productService from "../services/productService";
+import Header from "./Header";
+import cartService from "../services/cartService";
 
-function SideBar({ data, product, setProduct, cart, setCart }) {
-    const [products, setProducts] = useState(data.products);
+function SideBar({ data, product, setProduct, cart, setCart, statusCart, setStatusCart }) {
+    const [products, setProducts] = useState([]);
     const [filterProduct, setFilterProduct] = useState([]);
 
     const [companies, setCompanies] = useState(data.companies);
@@ -134,74 +137,74 @@ function SideBar({ data, product, setProduct, cart, setCart }) {
                     }
                 </div>
                 <div className="d-flex flex-wrap gap-5">
-                    <Content filterProduct={filterProduct} filterCompanyStatus={filterCompanyStatus} filterCategoryStatus={filterCategoryStatus} filterColorStatus={filterColorStatus} filterPriceStatus={filterPriceStatus} data={data} product={product} setProduct={setProduct} cart={cart} setCart={setCart} />
+                    <Content filterProduct={filterProduct} filterCompanyStatus={filterCompanyStatus} filterCategoryStatus={filterCategoryStatus} filterColorStatus={filterColorStatus} filterPriceStatus={filterPriceStatus} data={data} product={product} setProduct={setProduct} cart={cart} setCart={setCart} products={products} setProducts={setProducts} statusCart={statusCart} setStatusCart={setStatusCart}/>
                 </div>
             </div>
         </div>
     )
 }
 
-function Content({ filterProduct, filterCompanyStatus, filterCategoryStatus, filterColorStatus, filterPriceStatus, data, product, setProduct, cart, setCart }) {
+function Content({ filterProduct, filterCompanyStatus, filterCategoryStatus, filterColorStatus, filterPriceStatus, data, product, setProduct, cart, setCart, products, setProducts, statusCart, setStatusCart }) {
 
     const handleAddProductToCart = (id) => {
         checkProductInCart(id);
-        console.log(cart);
     }
 
-    const checkProductInCart = (id) => {
-    const index = cart.findIndex(item => item.id === id); // Use strict equality (===) instead of loose equality (==)
-    console.log(index);
+    const checkProductInCart = async (id) => {
+        const response = await cartService.getAllCarts();
 
-    if (index > -1) {
-        // If the product is already in the cart, update its quantity
-        const updatedCart = cart.map(item => {
-            if (item.id === id) {
-                return { ...item, quantity: item.quantity + 1 };
+        for (let i = 0; i < response.length; i++) {
+            if (response[i].id == id) {
+                response[i].quantity = response[i].quantity + 1;
+                
+                cartService.editCart(id, response[i]); 
+                setStatusCart(true);
+                return;
             }
-            return item;
-        });
-
-        setCart(updatedCart);
-    } else {
-        // If the product is not in the cart, add it with quantity 1
+        }
         const newProduct = {
-            id: `${id}`,
+            id: id,
             quantity: 1
-        };
-        setCart([...cart, newProduct]); // Create a new array to avoid mutating the state directly
+        }
+        await cartService.createCart(newProduct);
+        setStatusCart(true);
     }
-}
 
 
     useEffect(() => {
+        getAllProducts();
+    }, [])
 
-    }, [cart])
-
+    const getAllProducts = async () => {
+        const listProducts = await productService.getAllProducts();
+        setProducts(listProducts);
+    }
 
     return (
         <>
             {
-                filterCompanyStatus || filterCategoryStatus || filterColorStatus || filterPriceStatus ? filterProduct.map((shoe) => (
-                    <div className="card" style={{ width: 200 }} key={shoe.id}>
-                        <img src={shoe.img} className="card-img-top" alt="..." style={{ height: 150 }} />
-                        <div className="card-body">
-                            <h5 className="card-title">{shoe.title}</h5>
-                            <div className="d-flex" style={{ width: 200 }}>
-                                <i className="fa-solid fa-star" style={{ color: 'yellow' }}></i>
-                                <i className="fa-solid fa-star" style={{ color: 'yellow' }}></i>
-                                <i className="fa-solid fa-star" style={{ color: 'yellow' }}></i>
-                                <i className="fa-solid fa-star" style={{ color: 'yellow' }}></i>
-                                <p className="ms-2">({shoe.reviews} reviews)</p>
+                filterCompanyStatus || filterCategoryStatus || filterColorStatus || filterPriceStatus ?
+                    filterProduct.map((shoe) => (
+                        <div className="card" style={{ width: 200 }} key={shoe.id}>
+                            <img src={shoe.img} className="card-img-top" alt="..." style={{ height: 150 }} />
+                            <div className="card-body">
+                                <h5 className="card-title">{shoe.title}</h5>
+                                <div className="d-flex" style={{ width: 200 }}>
+                                    <i className="fa-solid fa-star" style={{ color: 'yellow' }}></i>
+                                    <i className="fa-solid fa-star" style={{ color: 'yellow' }}></i>
+                                    <i className="fa-solid fa-star" style={{ color: 'yellow' }}></i>
+                                    <i className="fa-solid fa-star" style={{ color: 'yellow' }}></i>
+                                    <p className="ms-2">({shoe.reviews} reviews)</p>
+                                </div>
+                                <div className="d-flex gap-3">
+                                    <p style={{ textDecoration: 'line-through' }}>${shoe.prevPrice}</p>
+                                    <p>${shoe.newPrice}</p>
+                                </div>
+                                <a href="#" className="btn btn-primary">Add to Cart</a>
                             </div>
-                            <div className="d-flex gap-3">
-                                <p style={{ textDecoration: 'line-through' }}>${shoe.prevPrice}</p>
-                                <p>${shoe.newPrice}</p>
-                            </div>
-                            <a href="#" className="btn btn-primary">Add to Cart</a>
                         </div>
-                    </div>
-                )) :
-                    data.products.map((shoe) => (
+                    )) :
+                    products.map((shoe) => (
                         <div className="card" style={{ width: 200 }} key={shoe.id}>
                             <img src={shoe.img} className="card-img-top" alt="..." style={{ height: 150 }} />
                             <div className="card-body">

@@ -16,3 +16,11 @@
     font-size: 30px;
 
 }
+
+.cart-link:hover i {
+    color: blue;
+}
+
+.cart-link i {
+    color: black;
+}

@@ -1,9 +1,24 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import '../components/header.css';
 import data from "../data/products.json";
 import { Link } from 'react-router-dom';
+import cartService from "../services/cartService";
 
-function Header({ cart }) {
+
+
+function Header({ cart, setCart, statusCart, setStatusCart }) {
+
+    const quantityInCart = async () => {
+        const listCarts = await cartService.getAllCarts();
+        setCart(listCarts);
+    }
+
+    useEffect(() => {
+        quantityInCart();
+        setStatusCart(false);
+    }, [statusCart]);
+
+
     return (
         <div className="container d-flex header">
             <div className="col-md-3 d-flex">
@@ -29,8 +44,11 @@ function Header({ cart }) {
                     </ul>
                 </div>
                 <i className="fa-regular fa-heart"></i>
-                <i className="fa-solid fa-cart-arrow-down">{cart.length}</i>
-
+                <Link to="/cartDetails" className="cart-link">
+                    <i className="fa-solid fa-cart-arrow-down">
+                        {cart.length}
+                    </i>
+                </Link>
             </div>
         </div>
     )
