@@ -14,6 +14,8 @@ function Header({ cart, setCart, statusCart, setStatusCart }) {
         if (statusCart) {
             quantityInCart();
             setStatusCart(false);
+        } else {
+            quantityInCart();
         }
     }, [statusCart]);
 

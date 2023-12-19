@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import productService from "../services/productService";
-import Header from "./Header";
 import cartService from "../services/cartService";
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -139,7 +138,7 @@ function SideBar({ data, product, setProduct, cart, setCart, statusCart, setStat
                     }
                 </div>
                 <div className="d-flex flex-wrap gap-5">
-                    <Content filterProduct={filterProduct} filterCompanyStatus={filterCompanyStatus} filterCategoryStatus={filterCategoryStatus} filterColorStatus={filterColorStatus} filterPriceStatus={filterPriceStatus} data={data} product={product} setProduct={setProduct} cart={cart} setCart={setCart} products={products} setProducts={setProducts} statusCart={statusCart} setStatusCart={setStatusCart}/>
+                    <Content filterProduct={filterProduct} filterCompanyStatus={filterCompanyStatus} filterCategoryStatus={filterCategoryStatus} filterColorStatus={filterColorStatus} filterPriceStatus={filterPriceStatus} data={data} product={product} setProduct={setProduct} cart={cart} setCart={setCart} products={products} setProducts={setProducts} statusCart={statusCart} setStatusCart={setStatusCart} />
                 </div>
             </div>
         </div>
@@ -162,8 +161,8 @@ function Content({ filterProduct, filterCompanyStatus, filterCategoryStatus, fil
                 toast.success(`Quantity updated for product ${id}`, {
                     position: toast.POSITION.TOP_RIGHT
                 });
-                
-                cartService.editCart(id, response[i]); 
+
+                cartService.editCart(id, response[i]);
                 setStatusCart(true);
                 return;
             }
